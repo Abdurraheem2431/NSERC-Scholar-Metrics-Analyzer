@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta lang="en" />
+    <title>Citco Report</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="stylesheet" href="cito.css" />
+    <link
+      rel="stylesheet"
+      href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css"
+    />
+  </head>
+
+  <body class="parent">
+    <header class="div1">
+      <h1>Merit Criteria for NSERC's Discovery Grant</h1>
+      <h3>Tiago Gomes Neves, Sakib Uddin, Muhammad Taha, Abdu-R-Raheem Ishfaq </h3>
+      <h3>Department of Computer Science</h3>
+      <h4>CPS 406 - Intro to Software Engineering</h4>
+      <button onclick="downloadPDF()">Download PDF</button>
+      <button onclick="downloadCSV()">Download CSV</button>
+    </header>
+
+    <article class="div2 content-wrapper">
+      <h2>&#8544; . Introduction</h2>
+      <p>
+        This report investigates the potential correlation between research
+        productivity and grant allocation by analyzing citation and publication
+        data in relation to the NSERC Discovery Grant (DG). The Discovery Grant,
+        offered by the Natural Sciences and Engineering Research Council of
+        Canada, supports Canadian university researchers in advancing knowledge
+        across science and engineering disciplines. One of the key potential 
+        indicators to assess a researcher's impact is the number of recent publications
+        and the impact they have, in other words, the amount of citations. To explore this 
+        relationship, we collected data on Canadian computer scientists who received a DG over the past 15 years,
+        then compiled their publication and citation counts from Google Scholar,
+        focusing on the years in which each researcher won the discovery grant. This study aims to
+        determine whether a measurable link exists between research impact and
+        funding decisions through statistical analysis and data visualization.
+      </p>
+      <p>
+        This paper is organized as follows: in Section &#8544;&#8544; we go over briefly of our technique to gather the researchers who won 
+        the discovery grant award in computer science. We then continue on how we used the names and Google Scholar to obtain each researcher's
+        publication count and citation count on the years they won the award. Section &#8544;&#8544;&#8544; goes over data analysis, what we tested, our
+        results on the tests. Section &#8547; we will go over the results we got and what they could possibly mean in terms of NSERC's merit criteria for the award.
+      </p>
+    </article>
+
+    <article class="div3 content-wrapper">
+      <h2>&#8544;&#8544;. Data Gathering</h2>
+      <p>
+        To begin, we first collected a list of the winners of the discovery grant from the last 15 years. 
+        We achieved this by using NSERC's award database and obtaining the excel sheet for everyone who has won an award in the computer science field.
+        This was done manually and the result was an excel file with the name, award, and year of computer science award winners. We then created getNames.py script which
+        goes through the excel sheet using pandas, to grab the names and years of those who won the discovery grant. We then needed to obtain the publication and citation counts 
+        for each winner during the year that they won. The way we did this is through the web scraping library Scholarly. getCounts.py uses the scholarly 
+        api to search for each researchers Google Scholar page returning a json of all the data on the author page. We then searched through the json for all publications 
+        that were published during the year that that author won and the number of citations for all those publications. Those researchers without a google scholar page were ignored and are not 
+        featured in our data. The following table is the table of researchers who won the discovery grant with their name, year they won, publication count and citation count.  
+      </p>
+    
+      <p style="text-align: center; font-size: 25px; font-weight: bold;">Table &#8544;</p>
+      <h3>Past Discovery Grant Winners in the Computer Science Field</h3>
+      <div style="margin-bottom: 1rem">
+        <label for="yearStart">Start Year:</label>
+        <select id="yearStart" onchange="filterByYearRange()"></select>
+
+        <label for="yearEnd">End Year:</label>
+        <select id="yearEnd" onchange="filterByYearRange()"></select>
+      </div>
+      <table id="researcherTable" class="display">
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th>Year</th>
+            <th>Publication Count</th>
+            <th>Citation Count</th>
+          </tr>
+        </thead>
+        <tbody id="table-body"></tbody>
+      </table>
+      <br>
+    </article>
+
+    <article class="div3 content-wrapper">
+      <h2>&#8544;&#8544;&#8544;. Data Analysis</h2>
+      <p> We began by analyzing the publication count for each researcher. We plotted a publication count vs researcher bar graph
+        as seen in Fig. 1. From this graph we see that the average publication count is about 8.77 publications in a year. This number is
+        quite high as research papers take a long time to complete due to the collecting of data, producing results, and then analyzing them.
+        The lowest publication count is held by multiple researchers at just one. It's likely that their research paper held a huge impact
+        in their field and helped them achieve the award despite the low publication count. The largest number of publications done in the year where the researcher 
+        won was by Nicholas Harvey with 71 publications in a year. The number of publications themselves do not seem to be a criteria for the 
+        award but rather the quality publications and their potential impact on the future.
+      </p>
+      <iframe src="bar_publications.pdf" style="width: 100%;height: 550px;border: none;text-align: center;"></iframe>
+      <p style="text-align: center;">Fig. 1. Relationship between publication count and the researcher</p>
+      <p>
+        We then took a similar approach to look at each researcher's citation counts during the year that they won the award. Using the data from Table &#8544;
+        we plotted a citation vs researcher bar graph as seen in Fig. 2. The bar graph shows that the average citation number was about 574. This number is quite high
+        indicating that NSERC values more the impact of a publication quite highly. The lowest publication count in our data is 0 by several researchers. This could 
+        be due to the researchers not updating their google scholar author page and thus not having all the data present. Another potential explanation is that NSERC's other criteria
+        was enough for these researchers to win the award without having a publication with a lot of impact in their field. The highest citation count was by Jonathan Anderson where
+        just only 27 publications resulted in 13892 citations in 2015 when he won the award.
+      </p>
+      <iframe src="bar_citations.pdf" style="width: 100%;height: 550px;border: none;text-align: center;"></iframe>
+      <p style="text-align: center;">Fig. 2. Relationship between citation count and the researcher</p>
+      <p>
+        Finally, we looked at the publication count vs citation count to see if there is any correlation between the two. Using the data from the Table &#8544; we plotted a 
+        scatter plot of publication counts vs citation counts as seen in Fig. 3. From this plot we calculated the r value using the matplotlib function. The r value is a value between 
+        -1 and 1 and indicates the level of correlation between the two variables. An r value of 1 represents a strong positive correlation between the two variables while a r value of -1 indicates
+        a strong negative correlation between them and an r value close to 0 indicates no correlation. The r value we observed was r = 0.59, this value is relatively high and indicates
+        a moderate positive correlation. What this means in context of the criteria is that the researchers who won the award won it due to the quality of their research over the quantity. Most of the work published was of high quality and thus is impactful and got a high citation count while those
+        with just high publication counts were unlikely to win the award if their publications had no impact.
+      </p>
+      <iframe src="scatterplot_citation_vs_publication.pdf" style="width: 100%;height: 650px;border: none;text-align: center;"></iframe>
+      <p style="text-align: center;">Fig. 3. Relationship between publication count and the citation count</p>
+
+    </article>
+
+    <article class="div3 content-wrapper">
+      <h2>&#8547;. Conclusion</h2>
+      <p>
+        The analysis conducted in this project reveals a moderate positive
+        correlation between researchers’ publication and citation counts and
+        their eligibility for the NSERC Discovery Grant, as reflected by a
+        Pearson correlation coefficient of 0.59. While this suggests that higher
+        research output and academic influence may enhance a researcher’s
+        chances of receiving funding, it also highlights that the impact of a publication is 
+        an important factor in terms of NSERC criteria. This is further shown in the average citation count 
+        of the researcher being 500+ which indicates that NSERC values impactful publications. However, other
+        qualitative factors likely play a role in funding decisions, such as the
+        research proposal’s innovation, importance to the field, and alignment with NSERC’s
+        priorities.
+      </p>
+    </article>
+
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+
+    <script>
+      const yearRange = Array.from(
+        { length: 2023 - 2008 + 1 },
+        (_, i) => 2008 + i
+      );
+
+      function populateYearDropdowns() {
+        const startSelect = document.getElementById("yearStart");
+        const endSelect = document.getElementById("yearEnd");
+
+        yearRange.forEach((year) => {
+          startSelect.innerHTML += `<option value="${year}">${year}</option>`;
+          endSelect.innerHTML += `<option value="${year}">${year}</option>`;
+        });
+
+        startSelect.value = "2008";
+        endSelect.value = "2023";
+      }
+
+      function filterByYearRange() {
+        const start = parseInt(document.getElementById("yearStart").value);
+        const end = parseInt(document.getElementById("yearEnd").value);
+
+        // Remove all old filters first
+        $.fn.dataTable.ext.search = $.fn.dataTable.ext.search.filter(
+          (f) => false
+        );
+
+        $.fn.dataTable.ext.search.push(function (settings, data, dataIndex) {
+          const year = parseInt(data[1]); // Year is column 1
+          return year >= start && year <= end;
+        });
+
+        $("#researcherTable").DataTable().draw();
+      }
+
+      function downloadCSV() {
+        const table = $("#researcherTable").DataTable();
+        const data = table.rows({ filter: "applied" }).data();
+
+        const rows = [["Name", "Year", "Publication Count", "Citation Count"]];
+        for (let i = 0; i < data.length; i++) {
+          rows.push(data[i]);
+        }
+
+        const csvContent = rows
+          .map((e) => e.map((cell) => `"${cell}"`).join(","))
+          .join("\n");
+        const blob = new Blob([csvContent], {
+          type: "text/csv;charset=utf-8;",
+        });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.setAttribute("href", url);
+        a.setAttribute("download", "filtered_researcher_data.csv");
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+      }
+
+      function downloadPDF() {
+        window.print();
+      }
+
+      fetch("output.txt")
+        .then((response) => response.text())
+        .then((text) => {
+          const lines = text.split(/[\r\n]+/);
+
+          const tbody = document.getElementById("table-body");
+
+          lines.forEach((line) => {
+            const regex =
+              /Name:\s*(.*?)\s+Year:\s*(\d{4})\s+Publication count:\s*(\d+)\s+Citation count:\s*(\d+)/;
+
+            const match = line.match(regex);
+            if (match) {
+              const [_, name, year, pubs, cits] = match;
+              const row = `<tr><td>${name}</td><td>${year}</td><td>${pubs}</td><td>${cits}</td></tr>`;
+              tbody.insertAdjacentHTML("beforeend", row);
+            }
+          });
+
+          populateYearDropdowns();
+          $("#researcherTable").DataTable({ pageLength: 10 });
+        })
+        .catch((error) => {
+          console.error("Could not load output.txt:", error);
+        });
+    </script>
+  </body>
+</html>
