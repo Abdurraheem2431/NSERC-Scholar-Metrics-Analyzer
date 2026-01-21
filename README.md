@@ -3,7 +3,7 @@
 A Python data analysis project that evaluates the relationship between NSERC Discovery Grant (Computer Science) recipients and academic impact using Google Scholar publication/citation metrics, then publishes results as charts and a static website.
 
 ## Live website
-https://www.cs.torontomu.ca/tneves/website/Cito.html
+[[https://www.cs.torontomu.ca/tneves/website/Citco.html](https://www.cs.torontomu.ca/~tneves/website/Cito.html)
 
 ## Features
 - Parses NSERC awards data from Excel to extract Discovery Grants Program winners (name + fiscal year).
